@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  color: #1f2937;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: #f3f4f6;
+}
+
+.btn {
+  text-transform: none;
+  font-weight: 500;
+}
+
+.badge {
+  text-transform: none;
+}
