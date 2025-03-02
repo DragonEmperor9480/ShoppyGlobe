@@ -10,10 +10,14 @@ const NotFound = lazy(() => import('./components/NotFound'))
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-gray-100">
+      <div className="min-h-screen bg-gradient-to-br from-[#2e1065] via-[#4c1d95] to-[#6d28d9]">
         <Header />
         <main className="container mx-auto px-4 py-8">
-          <Suspense fallback={<div className="loading loading-spinner loading-lg"></div>}>
+          <Suspense fallback={
+            <div className="flex justify-center items-center min-h-[60vh]">
+              <div className="loading loading-spinner loading-lg text-primary"></div>
+            </div>
+          }>
             <Routes>
               <Route path="/" element={<ProductList />} />
               <Route path="/product/:id" element={<ProductDetail />} />

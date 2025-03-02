@@ -1,11 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useProducts } from '../hooks/useProducts';
 import ProductItem from './ProductItem';
+import PropTypes from 'prop-types';
 
-function ProductList() {
+function ProductList({ searchReset }) {
   const [searchInput, setSearchInput] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const { products, loading, error } = useProducts(searchQuery);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+
+  useEffect(() => {
+    setSearchInput('');
+    setSearchQuery('');
+  }, [searchReset]);
+
+  const categories = ['all', ...new Set(products.map(product => product.category))];
+  
+  const filteredProducts = selectedCategory === 'all' 
+    ? products 
+    : products.filter(product => product.category === selectedCategory);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -13,8 +26,8 @@ function ProductList() {
   };
 
   if (loading) return (
-    <div className="flex justify-center items-center min-h-[50vh]">
-      <div className="loading loading-spinner loading-lg text-primary"></div>
+    <div className="flex justify-center items-center min-h-[60vh]">
+      <div className="loading loading-spinner loading-lg text-light"></div>
     </div>
   );
   
@@ -28,20 +41,23 @@ function ProductList() {
   );
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-center mb-8">
+    <div className="container mx-auto px-4 py-8 mt-16">
+      <div className="flex flex-col items-center mb-12">
+        <h1 className="text-4xl font-bold gradient-text mb-6 text-center">
+          Discover Amazing Products
+        </h1>
         <form onSubmit={handleSearch} className="form-control w-full max-w-md">
           <div className="flex gap-2">
             <div className="relative flex-1">
               <input
                 type="text"
                 placeholder="Search products..."
-                className="input input-bordered w-full pr-10 bg-white text-neutral placeholder:text-neutral-400"
+                className="input glass-card w-full pr-10 text-light placeholder:text-light/70 focus:outline-primary"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
               />
               <svg
-                className="absolute right-3 top-3 h-5 w-5 text-neutral-500"
+                className="absolute right-3 top-3 h-5 w-5 text-light/70"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -56,21 +72,43 @@ function ProductList() {
             </div>
             <button 
               type="submit" 
-              className="btn btn-primary text-white"
+              className="btn btn-primary text-light"
             >
               Search
             </button>
           </div>
         </form>
       </div>
+
+      <div className="mb-8 overflow-x-auto">
+        <div className="flex gap-2 pb-2">
+          {categories.map((category) => (
+            <button
+              key={category}
+              onClick={() => setSelectedCategory(category)}
+              className={`btn btn-sm ${
+                selectedCategory === category 
+                  ? 'btn-primary text-light' 
+                  : 'glass-card text-light hover:bg-primary/20'
+              }`}
+            >
+              {category.charAt(0).toUpperCase() + category.slice(1)}
+            </button>
+          ))}
+        </div>
+      </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {products.map((product) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {filteredProducts.map((product) => (
           <ProductItem key={product.id} product={product} />
         ))}
       </div>
     </div>
   );
 }
+
+ProductList.propTypes = {
+  searchReset: PropTypes.bool,
+};
 
 export default ProductList; 
